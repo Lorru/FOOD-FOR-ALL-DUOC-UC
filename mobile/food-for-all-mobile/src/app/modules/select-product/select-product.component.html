@@ -1,0 +1,47 @@
+<ion-header no-border>
+  <ion-toolbar class="ion-toolbar-header">
+    <ion-title>Seleccionar un Alimento</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss();">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar [(ngModel)]="searcher" (input)="search();"></ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ng-container *ngIf="products.length > 0 && !loadingFindAll">
+    <ion-list>
+      <ion-item-group *ngFor="let productType of productTypes">
+        <ion-item-divider><h3>{{ productType.name }}</h3></ion-item-divider>
+        <ng-container *ngFor="let product of products; let i = index">
+          <ion-item *ngIf="product.idProductType == productType.id" (click)="selectProduct(i);">
+            <img [src]="'assets/img/products/' + product.referenceImage" width="13%" class="padding-right-10">
+            <ion-label>{{ product.name }}</ion-label>
+          </ion-item>
+        </ng-container>
+      </ion-item-group>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="products.length == 0 && loadingFindAll">
+    <ion-list>
+      <ion-item *ngFor="let x of [1,1,1,1,1,1,1,1,1,1,1]">
+        <ion-thumbnail slot="start"></ion-thumbnail>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="products.length > 0 && loadingFindAll">
+    <ion-list>
+      <ion-item *ngFor="let x of [1,1,1,1,1,1,1,1,1,1,1]">
+        <ion-thumbnail slot="start"></ion-thumbnail>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+</ion-content>

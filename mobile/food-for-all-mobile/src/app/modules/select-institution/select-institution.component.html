@@ -1,0 +1,44 @@
+<ion-header no-border>
+  <ion-toolbar class="ion-toolbar-header">
+    <ion-title>Seleccionar una Institución</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss();">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar [(ngModel)]="searcher" (input)="search();"></ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ng-container *ngIf="institutions.length > 0 && !loadingFindAll">
+    <ion-list>
+      <ion-item *ngFor="let institution of institutions; let i = index" (click)="selectInstitution(i);">
+        <ion-label>
+          <h3>{{ institution.name }}</h3>
+          <p>{{ institution.rut }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="institutions.length == 0 && loadingFindAll">
+    <ion-list>
+      <ion-item *ngFor="let x of [1,1,1,1,1,1,1,1,1,1,1]">
+        <ion-thumbnail slot="start"></ion-thumbnail>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="institutions.length > 0 && loadingFindAll">
+    <ion-list>
+      <ion-item *ngFor="let x of [1,1,1,1,1,1,1,1,1,1,1]">
+        <ion-thumbnail slot="start"></ion-thumbnail>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+</ion-content>

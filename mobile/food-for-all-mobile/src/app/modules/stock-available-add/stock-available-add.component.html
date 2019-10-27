@@ -1,0 +1,31 @@
+<ion-header no-border>
+  <ion-toolbar>
+    <ion-title>Agregar Alimento listo para donar</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss();">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <div class="ion-text-center">
+    <span style="color: #f04141">¿ Seguro que quieres poner disponible este alimento ?</span>
+  </div>
+  <br>
+  <ion-list>
+    <ion-item>
+      <img [src]="'assets/img/products/' + stock.idProductNavigation.referenceImage" width="13%"
+        class="padding-right-10">
+      <ion-label>{{ stock.idProductNavigation.name }}</ion-label>
+      <span>
+        <ion-icon name="cart"></ion-icon> {{ stock.quantity }}
+      </span>
+    </ion-item>
+  </ion-list>
+  <ion-button color="danger" expand="full" (click)="create();"
+    [disabled]="loadingCreate || loadingFindByIdUserAndFilterDynamic">
+    <ion-icon name="add" *ngIf="!loadingCreate"></ion-icon>
+    <ion-spinner name="crescent" slot="end" *ngIf="loadingCreate"></ion-spinner> Agregar
+  </ion-button>
+</ion-content>

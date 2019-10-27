@@ -1,0 +1,125 @@
+<ion-toolbar>
+  <ion-segment (ionChange)="changeIonSegment($event);" color="danger">
+    <ion-segment-button value="All">
+      <ion-icon name="list"></ion-icon>
+    </ion-segment-button>
+    <ion-segment-button value="IsAvailable">
+      <ion-icon name="star"></ion-icon>
+    </ion-segment-button>
+    <ion-segment-button value="Available">
+      <ion-icon name="heart"></ion-icon>
+    </ion-segment-button>
+    <ion-segment-button value="Quantity">
+      <ion-icon name="trending-down"></ion-icon>
+    </ion-segment-button>
+    <ion-segment-button value="Status">
+      <ion-icon name="trash"></ion-icon>
+    </ion-segment-button>
+  </ion-segment>
+  <ion-searchbar [(ngModel)]="searcher" (input)="search();"></ion-searchbar>
+</ion-toolbar>
+<ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ng-container *ngIf="stocks.length > 0 && !loadingFindByIdUser">
+    <ion-list>
+      <ion-item-group *ngFor="let productType of productTypes">
+        <ion-item-divider>
+          <h3>{{ productType.name }}</h3>
+        </ion-item-divider>
+        <ng-container *ngFor="let stock of stocks; let i = index">
+          <ng-container *ngIf="stock.idProductNavigation.idProductType == productType.id">
+            <ion-item-sliding>
+              <ion-item-options side="start">
+                <ion-item-option color="warning" (click)="updateById(i);" *ngIf="stock.status">
+                  <ion-icon slot="icon-only" name="create"></ion-icon>
+                </ion-item-option>
+                <ion-item-option color="primary" (click)="addObservation(i);">
+                  <ion-icon slot="icon-only" name="quote"></ion-icon>
+                </ion-item-option>
+                <ion-item-option color="danger" (click)="updateIsAvailable(i);"
+                  *ngIf="stock.status && !stock.isAvailable && stock.quantity > 0">
+                  <ion-icon slot="icon-only" name="star"></ion-icon>
+                </ion-item-option>
+                <ion-item-option color="danger" (click)="createStockAvailable(i);" *ngIf="validateIsAvailableStock(i);">
+                  <ion-icon slot="icon-only" name="heart"></ion-icon>
+                </ion-item-option>
+                <ion-item-option color="secondary" (click)="stockImage(i);">
+                  <ion-icon slot="icon-only" name="image"></ion-icon>
+                </ion-item-option>
+              </ion-item-options>
+              <ion-item [routerLink]="'/stock/' + stock.id" detail>
+                <img [src]="'assets/img/products/' + stock.idProductNavigation.referenceImage" width="13%">
+                <ion-label>{{ stock.idProductNavigation.name }}</ion-label>
+                <span>
+                  <ion-icon name="cart"></ion-icon> Cantidad {{ stock.quantity }}
+                </span>
+              </ion-item>
+              <ion-item-options side="end">
+                <ion-item-option color="danger" (click)="updateStatusById(i, false);"
+                  *ngIf="stock.status && !validateDestroyIsAvailableStock(i);">
+                  <ion-icon slot="icon-only" name="trash"></ion-icon>
+                </ion-item-option>
+                <ion-item-option color="success" (click)="updateStatusById(i, true);" *ngIf="!stock.status">
+                  <ion-icon slot="icon-only" name="list"></ion-icon>
+                </ion-item-option>
+                <ion-item-option color="danger" (click)="destroyStockAvailable(i);"
+                  *ngIf="validateDestroyIsAvailableStock(i);">
+                  <ion-icon slot="icon-only" name="heart-dislike"></ion-icon>
+                </ion-item-option>
+              </ion-item-options>
+            </ion-item-sliding>
+          </ng-container>
+        </ng-container>
+      </ion-item-group>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="stocks.length == 0 && !loadingFindByIdUser">
+    <div class="container padding-top-100 ion-text-center">
+      <div class="font-size-100">
+        <ng-container *ngIf="ionSegment.value == 'All'">
+          <ion-icon name="list"></ion-icon>
+          <h3>Cuando tengas stock de alimentos, aparecerá aqui.</h3>
+        </ng-container>
+        <ng-container *ngIf="ionSegment.value == 'IsAvailable'">
+          <ion-icon name="star"></ion-icon>
+          <h3>Cuando tengas stock de alimentos disponible para donar, aparecerá aqui.</h3>
+        </ng-container>
+        <ng-container *ngIf="ionSegment.value == 'Available'">
+          <ion-icon name="heart"></ion-icon>
+          <h3>Cuando tengas stock de alimentos que ya estan listo para donar, aparecerá aqui.</h3>
+        </ng-container>
+        <ng-container *ngIf="ionSegment.value == 'Quantity'">
+          <ion-icon name="trending-down"></ion-icon>
+          <h3>Cuando tengas stock de alimentos que tengan poca cantidad, aparecerá aqui.</h3>
+        </ng-container>
+        <ng-container *ngIf="ionSegment.value == 'Status'">
+          <ion-icon name="trash"></ion-icon>
+          <h3>Cuando tengas stock de alimentos eliminados temporalmente, aparecerá aqui.</h3>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="stocks.length == 0 && loadingFindByIdUser">
+    <ion-list>
+      <ion-item *ngFor="let x of [1,1,1,1,1,1,1,1,1,1,1]">
+        <ion-thumbnail slot="start"></ion-thumbnail>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="stocks.length > 0 && loadingFindByIdUser">
+    <ion-list>
+      <ion-item *ngFor="let x of [1,1,1,1,1,1,1,1,1,1,1]">
+        <ion-thumbnail slot="start"></ion-thumbnail>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="add();" color="danger">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

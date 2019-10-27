@@ -1,0 +1,76 @@
+<ion-header no-border>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/menu/messages"></ion-back-button>
+    </ion-buttons>
+    <ion-avatar slot="start" (click)="getPhotoProfile(userReceived);" *ngIf="userReceived">
+      <img src="/assets/img/user.png" *ngIf="userReceived.photo == null">
+      <img [src]="'data:image/jpeg;base64,' + userReceived.photo"
+        *ngIf="userReceived.photo != null && !userReceived.isWithFacebook">
+      <img [src]="userReceived.photo" *ngIf="userReceived.photo != null && userReceived.isWithFacebook">
+    </ion-avatar>
+    <ion-title>
+      <ion-label>
+        {{ userNameUserReceived }}
+        <span class="onLine" *ngIf="onLineUserReceived"></span>
+      </ion-label>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button style="color:white" shape="round" (click)="getCamera();">
+        <ion-icon name="camera"></ion-icon>
+      </ion-button>
+      <ion-button style="color:white" shape="round" (click)="getPhotoLibrary();">
+        <ion-icon name="image"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="padding-left-10 padding-right-10">
+    <ion-grid>
+      <ng-container *ngFor="let message of messages; let i = index">
+        <ion-row *ngIf="message.idUserSend != userConnect.id">
+          <ion-col size="12">
+            <div class="chat-message chat-message-left">
+              <span *ngIf="message.idTypeMessage == 1">{{ message.message1 }}</span>
+              <div class="container padding-top-10" *ngIf="message.idTypeMessage == 2">
+                <img [src]="'data:image/jpeg;base64,' + message.message1" (click)="getPhoto(i);">
+              </div>
+              <div class="font-size-15">
+                <span style="float: right">
+                  {{ message.date | date:'HH:mm' }}
+                </span>
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="message.idUserSend == userConnect.id">
+          <ion-col size="12">
+            <div class="chat-message chat-message-right">
+              <span *ngIf="message.idTypeMessage == 1">{{ message.message1 }}</span>
+              <div class="container padding-top-10" *ngIf="message.idTypeMessage == 2">
+                <img [src]="'data:image/jpeg;base64,' + message.message1" (click)="getPhoto(i);">
+              </div>
+              <div class="font-size-15">
+                <span style="float: right">
+                  {{ message.date | date:'HH:mm' }}
+                </span>
+              </div>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ng-container>
+    </ion-grid>
+  </div>
+  <ion-infinite-scroll threshold="150px" (ionInfinite)="scroll($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando Mensajes...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>
+<ion-footer>
+  <ion-item>
+    <ion-input type="text" name="messageString" [(ngModel)]="messageString" placeholder="Escribe un mensaje">
+    </ion-input>
+    <ion-icon color="primary" name="send" (click)="createMessage();"></ion-icon>
+  </ion-item>
+</ion-footer>

@@ -1,0 +1,16 @@
+<ion-content>
+  <ion-grid class="ion-text-center">
+    <ion-row>
+      <ion-col size="2" *ngFor="let star of starts; let i = index">
+        <ion-button fill="clear" color="dark" (click)="selectStar(i);">
+          <ion-icon [name]="star.icon"></ion-icon>
+        </ion-button>
+      </ion-col>
+      <ion-col size="2" *ngIf="calification.calification != null">
+        <ion-button fill="clear" color="primary" (click)="create();">
+          <ion-icon name="send"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

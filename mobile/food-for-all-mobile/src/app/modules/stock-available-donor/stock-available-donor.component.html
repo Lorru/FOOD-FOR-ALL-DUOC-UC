@@ -1,0 +1,67 @@
+<ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-back-button defaultHref="/menu/stock-searcher"></ion-back-button>
+  </ion-buttons>
+  <ion-title>
+    Alimentos para donar de {{ donor }}
+  </ion-title>
+</ion-toolbar>
+<ion-toolbar>
+  <ion-searchbar [(ngModel)]="searcher" (input)="search();"></ion-searchbar>
+</ion-toolbar>
+<ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ng-container *ngIf="stocks.length > 0 && !loadingFindByIdUserDonor">
+    <ion-list>
+      <ion-item-group *ngFor="let productType of productTypes">
+        <ion-item-divider>
+          <h3>{{ productType.name }}</h3>
+        </ion-item-divider>
+        <ng-container *ngFor="let stock of stocks; let i = index">
+          <ng-container *ngIf="stock.idProductNavigation.idProductType == productType.id">
+            <ion-item-sliding>
+              <ion-item-options side="start">
+                <ion-item-option color="success" (click)="createStockReceived(i);">
+                  <ion-icon slot="icon-only" name="cart"></ion-icon>
+                </ion-item-option>
+              </ion-item-options>
+              <ion-item [routerLink]="'/stock/' + stock.id" detail>
+                <img [src]="'assets/img/products/' + stock.idProductNavigation.referenceImage" width="13%">
+                <ion-label>{{ stock.idProductNavigation.name }}</ion-label>
+                <span>
+                  <ion-icon name="cart"></ion-icon> Cantidad {{ stock.quantity }}
+                </span>
+              </ion-item>
+            </ion-item-sliding>
+          </ng-container>
+        </ng-container>
+      </ion-item-group>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="stocks.length == 0 && !loadingFindByIdUserDonor">
+    <div class="container padding-top-100 ion-text-center">
+      <div class="font-size-100">
+        <img src="assets/img/food-icon.png" width="30%">
+        <h3>El Donador aun no tiene alimentos para donar.</h3>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="stocks.length == 0 && loadingFindByIdUserDonor">
+    <ion-list>
+      <ion-item *ngFor="let x of [1,1,1,1,1,1,1,1,1,1,1]">
+        <ion-thumbnail slot="start"></ion-thumbnail>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="stocks.length > 0 && loadingFindByIdUserDonor">
+    <ion-list>
+      <ion-item *ngFor="let x of [1,1,1,1,1,1,1,1,1,1,1]">
+        <ion-thumbnail slot="start"></ion-thumbnail>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+</ion-content>

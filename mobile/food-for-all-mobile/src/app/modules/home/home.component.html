@@ -1,0 +1,280 @@
+<ion-content class="ion-padding">
+    <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    <ng-container *ngIf="!loadingFindByIdUser && user != null">
+        <div style="text-align: -webkit-center;">
+            <ion-avatar (click)="getPhotoProfile();">
+                <img src="/assets/img/user.png" *ngIf="user.photo == null">
+                <img [src]="'data:image/jpeg;base64,' + user.photo" *ngIf="user.photo != null && !user.isWithFacebook">
+                <img [src]="user.photo" *ngIf="user.photo != null && user.isWithFacebook">
+            </ion-avatar>
+            <ion-icon name="star" *ngFor="let x of stars"></ion-icon>
+        </div>
+        <ion-card>
+            <ion-card-content>
+                <h3 class="ion-text-center">Bienvenido {{ user.userName }}</h3>
+            </ion-card-content>
+        </ion-card>
+        <ng-container *ngIf="user.idUserType == 3">
+            <ion-card>
+                <ion-card-header>
+                    <ion-icon name="cart"></ion-icon> Ultimo alimento adquirido.
+                </ion-card-header>
+                <ion-card-content>
+                    <div style="text-align: -webkit-center;" *ngIf="productLastReceived != null">
+                        <ion-avatar>
+                            <img [src]="'assets/img/products/' + productLastReceived.referenceImage">
+                        </ion-avatar>
+                        <p>({{ productLastReceived.name }})</p>
+                    </div>
+                    <div style="text-align: -webkit-center;" *ngIf="productLastReceived == null">
+                        No has agregado mas alimentos.
+                    </div>
+                </ion-card-content>
+            </ion-card>
+            <ion-card>
+                <ion-card-header>
+                    <ion-icon name="star"></ion-icon> Alimento más adquirido.
+                </ion-card-header>
+                <ion-card-content>
+                    <div style="text-align: -webkit-center;" *ngIf="productMoreReceived != null">
+                        <ion-avatar>
+                            <img [src]="'assets/img/products/' + productMoreReceived.referenceImage">
+                        </ion-avatar>
+                        <p>({{ productMoreReceived.name }})</p>
+                    </div>
+                    <div style="text-align: -webkit-center;" *ngIf="productMoreReceived == null">
+                        No tienes aun un alimento que mas adquieres.
+                    </div>
+                </ion-card-content>
+            </ion-card>
+            <ion-card>
+                <ion-card-header>
+                    <ion-icon name="star-outline"></ion-icon> Alimento menos adquirido.
+                </ion-card-header>
+                <ion-card-content>
+                    <div style="text-align: -webkit-center;" *ngIf="productLessReceived != null">
+                        <ion-avatar>
+                            <img [src]="'assets/img/products/' + productLessReceived.referenceImage">
+                        </ion-avatar>
+                        <p>({{ productLessReceived.name }})</p>
+                    </div>
+                    <div style="text-align: -webkit-center;" *ngIf="productLessReceived == null">
+                        No tienes aun un alimento que menos adquieres.
+                    </div>
+                </ion-card-content>
+            </ion-card>
+            <ion-card>
+                <ion-card-header>
+                    <ion-icon name="heart"></ion-icon> Donador que mas veces has retirado alimento.
+                </ion-card-header>
+                <ion-card-content>
+                    <div style="text-align: -webkit-center;" *ngIf="userDonorMaxStockRetirated != null">
+                        <ion-avatar>
+                            <img [src]="'assets/img/user.png'" *ngIf="userDonorMaxStockRetirated.photo == null">
+                            <img [src]="'data:image/jpeg;base64,' + userDonorMaxStockRetirated.photo"
+                                *ngIf="userDonorMaxStockRetirated.photo != null && !userDonorMaxStockRetirated.isWithFacebook">
+                            <img [src]="user.photo"
+                                *ngIf="userDonorMaxStockRetirated.photo != null && userDonorMaxStockRetirated.isWithFacebook">
+                        </ion-avatar>
+                        <p><a
+                                [routerLink]="'/profile/' + userDonorMaxStockRetirated.id">{{ userDonorMaxStockRetirated.userName }}</a>
+                        </p>
+                    </div>
+                    <div *ngIf="userDonorMaxStockRetirated == null" style="text-align: -webkit-center;">
+                        Sin donador.
+                    </div>
+                </ion-card-content>
+            </ion-card>
+            <ion-card>
+                <ion-card-header>
+                    <ion-icon name="chatboxes"></ion-icon> Ultimo comentario sobre un alimento.
+                </ion-card-header>
+                <ion-card-content>
+                    <div style="text-align: -webkit-center;" *ngIf="stockCommentLastBeneficiary != null">
+                        <ion-avatar>
+                            <img
+                                [src]="'assets/img/products/' + stockCommentLastBeneficiary.idStockNavigation.idProductNavigation.referenceImage">
+                        </ion-avatar>
+                        <p>({{ stockCommentLastBeneficiary.idStockNavigation.idProductNavigation.name }})</p>
+                        <p>Por: {{ stockCommentLastBeneficiary.idUserNavigation.userName }}</p>
+                        <span
+                            *ngIf="stockCommentLastBeneficiary.idTypeMessage == 1">"{{ stockCommentLastBeneficiary.comment }}"</span>
+                        <div class="center-img" *ngIf="stockCommentLastBeneficiary.idTypeMessage == 2">
+                            <img [src]="'data:image/jpeg;base64,' + stockCommentLastBeneficiary.comment"
+                                (click)="getPhotoCommentLastBeneficiary();">
+                        </div>
+                    </div>
+                    <div *ngIf="stockCommentLastBeneficiary == null" style="text-align: -webkit-center;">
+                        Sin comentario.
+                    </div>
+                </ion-card-content>
+            </ion-card>
+            <ion-card>
+                <ion-card-header>
+                    Total de alimentos adquiridos ({{ chartsDoughnut.length }}).
+                </ion-card-header>
+                <ion-card-content *ngIf="chartsDoughnut.length == 0">
+                    <div style="text-align: -webkit-center;">
+                        <p>0 alimentos adquiridos.</p>
+                    </div>
+                </ion-card-content>
+                <ion-card-content *ngIf="chartsDoughnut.length > 0">
+                    <canvas #chartDoughnut></canvas>
+                </ion-card-content>
+            </ion-card>
+            <ion-card>
+                <ion-card-header>
+                    Alimentos adquiridos por fecha.
+                </ion-card-header>
+                <ion-card-content>
+                    <canvas #chartBar></canvas>
+                </ion-card-content>
+            </ion-card>
+        </ng-container>
+        <ng-container *ngIf="user.idUserType == 2">
+            <ion-card>
+                <ion-card-header>
+                    <ion-icon name="list"></ion-icon> Ultimo alimento agregado.
+                </ion-card-header>
+                <ion-card-content>
+                    <div style="text-align: -webkit-center;" *ngIf="productLastStock != null">
+                        <ion-avatar>
+                            <img [src]="'assets/img/products/' + productLastStock.referenceImage">
+                        </ion-avatar>
+                        <p>({{ productLastStock.name }})</p>
+                    </div>
+                    <div style="text-align: -webkit-center;" *ngIf="productLastStock == null">
+                        No has agregado mas alimentos.
+                    </div>
+                </ion-card-content>
+            </ion-card>
+            <ion-card>
+                <ion-card-header>
+                    <ion-icon name="trending-down"></ion-icon> Alimento con menos stock.
+                </ion-card-header>
+                <ion-card-content>
+                    <div style="text-align: -webkit-center;" *ngIf="productLessQuantityStock != null">
+                        <ion-avatar>
+                            <img [src]="'assets/img/products/' + productLessQuantityStock.referenceImage">
+                        </ion-avatar>
+                        <p>({{ productLessQuantityStock.name }})</p>
+                    </div>
+                    <div style="text-align: -webkit-center;" *ngIf="productLessQuantityStock == null">
+                        No tienes aun un alimento que tiene menos stock.
+                    </div>
+                </ion-card-content>
+            </ion-card>
+            <ion-card>
+                <ion-card-header>
+                    <ion-icon name="chatboxes"></ion-icon> Ultimo comentario recibido de un alimento.
+                </ion-card-header>
+                <ion-card-content>
+                    <div style="text-align: -webkit-center;" *ngIf="stockCommentLastDonor != null">
+                        <ion-avatar>
+                            <img
+                                [src]="'assets/img/products/' + stockCommentLastDonor.idStockNavigation.idProductNavigation.referenceImage">
+                        </ion-avatar>
+                        <p>({{ stockCommentLastDonor.idStockNavigation.idProductNavigation.name }})</p>
+                        <p>Por: {{ stockCommentLastDonor.idUserNavigation.userName }}</p>
+                        <span
+                            *ngIf="stockCommentLastDonor.idTypeMessage == 1">"{{ stockCommentLastDonor.comment }}"</span>
+                        <div class="center-img" *ngIf="stockCommentLastDonor.idTypeMessage == 2">
+                            <img [src]="'data:image/jpeg;base64,' + stockCommentLastDonor.comment"
+                                (click)="getPhotoCommentLastDonor();">
+                        </div>
+                    </div>
+                    <div *ngIf="stockCommentLastDonor == null" style="text-align: -webkit-center;">
+                        Sin comentario.
+                    </div>
+                </ion-card-content>
+            </ion-card>
+            <ion-card>
+                <ion-card-header>
+                    Total de alimentos en stock ({{ chartsDoughnut.length }}).
+                </ion-card-header>
+                <ion-card-content *ngIf="chartsDoughnut.length == 0">
+                    <div style="text-align: -webkit-center;">
+                        <p>0 alimentos en stock.</p>
+                    </div>
+                </ion-card-content>
+                <ion-card-content *ngIf="chartsDoughnut.length > 0">
+                    <canvas #chartDoughnut></canvas>
+                </ion-card-content>
+            </ion-card>
+            <ion-card>
+                <ion-card-header>
+                    Total de alimentos donados ({{ chartsDoughnutDonor.length }}).
+                </ion-card-header>
+                <ion-card-content *ngIf="chartsDoughnutDonor.length == 0">
+                    <div style="text-align: -webkit-center;">
+                        <p>0 alimentos donados.</p>
+                    </div>
+                </ion-card-content>
+                <ion-card-content *ngIf="chartsDoughnutDonor.length > 0">
+                    <canvas #chartDoughnutDonor></canvas>
+                </ion-card-content>
+            </ion-card>
+            <ion-card>
+                <ion-card-header>
+                    Stock de ingreso por fecha.
+                </ion-card-header>
+                <ion-card-content>
+                    <canvas #chartBar></canvas>
+                </ion-card-content>
+            </ion-card>
+        </ng-container>
+    </ng-container>
+    <ng-container *ngIf="loadingFindByIdUser && user != null">
+        <ion-list>
+            <ion-item-group>
+                <ion-item-divider>
+                    <ion-skeleton-text animated></ion-skeleton-text>
+                </ion-item-divider>
+                <ion-item>
+                    <ion-label>
+                        <ion-skeleton-text animated></ion-skeleton-text>
+                    </ion-label>
+                    <ion-label>
+                        <ion-skeleton-text animated></ion-skeleton-text>
+                    </ion-label>
+                </ion-item>
+            </ion-item-group>
+            <ion-item-group>
+                <ion-item-divider>
+                    <ion-skeleton-text animated></ion-skeleton-text>
+                </ion-item-divider>
+                <ion-item>
+                    <ion-label>
+                        <ion-skeleton-text animated></ion-skeleton-text>
+                    </ion-label>
+                    <ion-label>
+                        <ion-skeleton-text animated></ion-skeleton-text>
+                    </ion-label>
+                </ion-item>
+            </ion-item-group>
+            <ion-item-group>
+                <ion-item-divider>
+                    <ion-skeleton-text animated></ion-skeleton-text>
+                </ion-item-divider>
+                <ion-item *ngFor="let i of [1,1,1,1,1,1,1,1,1,1]">
+                    <ion-label>
+                        <ion-skeleton-text animated></ion-skeleton-text>
+                    </ion-label>
+                    <ion-label>
+                        <ion-skeleton-text animated></ion-skeleton-text>
+                    </ion-label>
+                </ion-item>
+            </ion-item-group>
+        </ion-list>
+    </ng-container>
+    <ng-container *ngIf="!loadingFindByIdUser && user == null">
+        <div class="container padding-top-100 ion-text-center">
+            <div class="font-size-100">
+                <ion-icon name="person"></ion-icon>
+                <h3>Upps!!, este Usuario no existe.</h3>
+            </div>
+        </div>
+    </ng-container>
+</ion-content>

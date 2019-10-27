@@ -1,0 +1,58 @@
+<ion-toolbar>
+  <ion-searchbar [(ngModel)]="searcher" (input)="search();"></ion-searchbar>
+</ion-toolbar>
+<ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ng-container *ngIf="stockReceiveds.length > 0 && !loadingFindByIdUserBeneficiary">
+    <ion-list>
+      <ion-item-group *ngFor="let productType of productTypes">
+        <ion-item-divider>
+          <h3>{{ productType.name }}</h3>
+        </ion-item-divider>
+        <ng-container *ngFor="let stockReceived of stockReceiveds; let i = index">
+          <ng-container *ngIf="stockReceived.idStockNavigation.idProductNavigation.idProductType == productType.id">
+            <ion-item [routerLink]="'/stock/' + stockReceived.idStockNavigation.id" detail>
+              <img [src]="'assets/img/products/' + stockReceived.idStockNavigation.idProductNavigation.referenceImage" width="13%">
+              <ion-label>
+                <h3>{{ stockReceived.idStockNavigation.idProductNavigation.name }}</h3>
+                <p>
+                  <ion-icon name="heart"></ion-icon> {{ stockReceived.idStockNavigation.idUserNavigation.userName }}
+                  <ion-icon name="calendar"></ion-icon> {{ stockReceived.date | date:'yyyy-MM-dd' }}
+                </p>
+              </ion-label>
+              <span>
+                <ion-icon name="cart"></ion-icon> Cantidad {{ stockReceived.quantity }}
+              </span>
+            </ion-item>
+          </ng-container>
+        </ng-container>
+      </ion-item-group>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="stockReceiveds.length == 0 && !loadingFindByIdUserBeneficiary">
+    <div class="container padding-top-100 ion-text-center">
+      <div class="font-size-100">
+        <img src="assets/img/food-icon.png" width="30%">
+        <h3>No tienes historial de alimentos retirados actualmente.</h3>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="stockReceiveds.length == 0 && loadingFindByIdUserBeneficiary">
+    <ion-list>
+      <ion-item *ngFor="let x of [1,1,1,1,1,1,1,1,1,1,1]">
+        <ion-thumbnail slot="start"></ion-thumbnail>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="stockReceiveds.length > 0 && loadingFindByIdUserBeneficiary">
+    <ion-list>
+      <ion-item *ngFor="let x of [1,1,1,1,1,1,1,1,1,1,1]">
+        <ion-thumbnail slot="start"></ion-thumbnail>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+</ion-content>

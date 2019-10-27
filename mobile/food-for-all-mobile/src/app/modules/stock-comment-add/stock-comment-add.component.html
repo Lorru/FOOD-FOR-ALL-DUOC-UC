@@ -1,0 +1,43 @@
+<ion-header no-border>
+  <ion-toolbar>
+    <ion-title>Agregar Comentario</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss();">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item>
+      <img [src]="'assets/img/products/' + stock.idProductNavigation.referenceImage" width="13%"
+        class="padding-right-10">
+      <ion-label>{{ stock.idProductNavigation.name }}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-grid class="ion-text-center">
+        <ion-row>
+          <ion-col size="4" *ngFor="let selectionComment of selectionComments; let i = index">
+            <ion-button fill="clear" [color]="selectionComment.color" (click)="selectOptionComment(i);">
+              <ion-icon [name]="selectionComment.icon"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+    <ion-item *ngIf="selectionComment == 'create'">
+      <ion-label position="stacked">Comentario</ion-label>
+      <ion-textarea rows="5" name="comentario" [(ngModel)]="stockComment.comment"></ion-textarea>
+    </ion-item>
+    <ion-item *ngIf="selectionComment != 'create'">
+      <div class="container padding-top-10">
+        <img [src]="'data:image/jpeg;base64,' + img" *ngIf="img != null">
+      </div>
+    </ion-item>
+  </ion-list>
+  <ion-button color="danger" expand="full" (click)="create();" [disabled]="loadingCreate">
+    <ion-icon name="add" *ngIf="!loadingCreate"></ion-icon>
+    <ion-spinner name="crescent" slot="end" *ngIf="loadingCreate"></ion-spinner> Agregar
+  </ion-button>
+</ion-content>

@@ -1,0 +1,23 @@
+<ion-header no-border>
+  <ion-toolbar>
+    <ion-title>Eliminar Alimento que ya esta listo para donar</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss();">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item>
+      <img [src]="'assets/img/products/' + stock.idProductNavigation.referenceImage" width="13%"
+        class="padding-right-10">
+      <ion-label>{{ stock.idProductNavigation.name }}</ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-button color="danger" expand="full" (click)="destroyById();" [disabled]="loadingDestroyById">
+    <ion-icon name="close" *ngIf="!loadingDestroyById"></ion-icon>
+    <ion-spinner name="crescent" slot="end" *ngIf="loadingDestroyById"></ion-spinner> Eliminar
+  </ion-button>
+</ion-content>

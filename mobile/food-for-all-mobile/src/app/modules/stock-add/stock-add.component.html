@@ -1,0 +1,35 @@
+<ion-header no-border>
+  <ion-toolbar>
+    <ion-title>Agregar Alimento</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss();">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item *ngIf="products.length > 0">
+      <img [src]="'assets/img/products/' + product.referenceImage" width="13%" class="padding-right-10">
+      <ion-icon name="arrow-dropdown" (click)="selectProduct();"></ion-icon>
+      <ion-input type="text" name="product" [(ngModel)]="product.name" readonly></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Cantidad</ion-label>
+      <ion-input type="number" name="quantity" placeholder="Cantidad" [(ngModel)]="stock.quantity" min="1"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Fecha de Expiración</ion-label>
+      <ion-datetime displayFormat="YYYYMM-DD" cancelText="Cancelar" doneText="Aceptar" [min]="min" [max]="max"  [(ngModel)]="stock.expirationDate"></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label>¿Esta disponible para donar?</ion-label>
+      <ion-toggle [(ngModel)]="stock.isAvailable" [disabled]="stock.quantity == 0"></ion-toggle>
+    </ion-item>
+  </ion-list>
+  <ion-button color="danger" expand="full" (click)="create();" [disabled]="loadingCreate && products.length == 0">
+    <ion-icon name="add" *ngIf="!loadingCreate"></ion-icon>
+    <ion-spinner name="crescent" slot="end" *ngIf="loadingCreate"></ion-spinner> Agregar
+  </ion-button>
+</ion-content>

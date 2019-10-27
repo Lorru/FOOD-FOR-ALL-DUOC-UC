@@ -1,0 +1,39 @@
+<ion-header no-border>
+  <ion-toolbar>
+    <ion-title>Agregar Ubicación</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss();">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item>
+      <ion-label>Posición actual</ion-label>
+      <ion-toggle [(ngModel)]="currentPosition" (ionChange)="getCurrentPosition();"></ion-toggle>
+    </ion-item>
+    <ion-item *ngIf="locations.length == 0">
+      <ion-label>¿Es tu ubicación principal para donar los alimentos?</ion-label>
+      <ion-toggle [(ngModel)]="location.isMain"></ion-toggle>
+    </ion-item>
+    <ion-item *ngIf="!currentPosition">
+      <ion-label position="stacked">Buscar dirección</ion-label>
+      <ion-input type="text" name="searchAddress" placeholder="Buscar dirección" [(ngModel)]="searchAddress" (input)="getAddressBySearch();"></ion-input>
+    </ion-item>
+    <ion-item *ngIf="!currentPosition && locationsMapbox.length > 0">
+      <ion-list style="box-shadow: 0 1px 8px 0 rgba(0,0,0,.3) !important;width: 100% !important;">
+        <ion-item *ngFor="let locationMapbox of locationsMapbox; let i = index" detail (click)="selectAddress(i);">
+          <ion-label>{{ locationMapbox.address }}</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-item>
+  </ion-list>
+  <ion-button color="danger" expand="full" (click)="create();" [disabled]="loadingCreate">
+    <ion-icon name="add" *ngIf="!loadingCreate"></ion-icon>
+    <ion-spinner name="crescent" slot="end" *ngIf="loadingCreate"></ion-spinner> Agregar
+  </ion-button>
+  <br>
+  <div id="map" class="container"></div>
+</ion-content>

@@ -1,0 +1,26 @@
+<ion-header no-border>
+  <ion-toolbar>
+    <ion-title>Registrar Denuncia para {{ user.userName }}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss();">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <div class="ion-text-center">
+    <span style="color: #f04141">No es obligatorio explicar la denuncia</span>
+  </div>
+  <br>
+  <ion-list>
+    <ion-item>
+      <ion-label position="stacked">Porque quieres hacer esta denuncia</ion-label>
+      <ion-textarea rows="5" name="reason" [(ngModel)]="denounced.reason"></ion-textarea>
+    </ion-item>
+  </ion-list>
+  <ion-button color="danger" expand="full" (click)="create();" [disabled]="loadingCreate">
+    <ion-icon name="save" *ngIf="!loadingCreate"></ion-icon>
+    <ion-spinner name="crescent" slot="end" *ngIf="loadingCreate"></ion-spinner> Registrar Denuncia
+  </ion-button>
+</ion-content>

@@ -1,0 +1,29 @@
+<ion-header no-border>
+  <ion-toolbar>
+    <ion-title>Agregar</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss();">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item>
+      <img [src]="'assets/img/products/' + stock.idProductNavigation.referenceImage" width="13%"
+        class="padding-right-10">
+      <ion-label>{{ stock.idProductNavigation.name }}</ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Cantidad</ion-label>
+      <ion-select name="quantity" [(ngModel)]="stockReceived.quantity" cancelText="Cancelar" okText="OK">
+        <ion-select-option *ngFor="let i of quantities" [value]="i+1">{{ i+1 }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+  <ion-button color="danger" expand="full" (click)="create();" [disabled]="loadingCreate">
+    <ion-icon name="add" *ngIf="!loadingCreate"></ion-icon>
+    <ion-spinner name="crescent" slot="end" *ngIf="loadingCreate"></ion-spinner> Agregar
+  </ion-button>
+</ion-content>

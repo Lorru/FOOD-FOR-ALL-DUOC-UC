@@ -1,0 +1,85 @@
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ng-container *ngIf="messages.length > 0 && !loadingFindByIdUserLast">
+    <ion-list>
+      <ng-container *ngFor="let message of messages; let i = index">
+        <ng-container *ngIf="message.idUserSend == user.id">
+          <ion-item [routerLink]="'/message/' +  message.idUserReceived + '/' + message.idUserSend" detail>
+            <ion-avatar slot="start" (click)="getPhotoProfile(message.idUserReceivedNavigation);">
+              <img src="/assets/img/user.png" *ngIf="message.idUserReceivedNavigation.photo == null">
+              <img [src]="'data:image/jpeg;base64,' + message.idUserReceivedNavigation.photo"
+                *ngIf="message.idUserReceivedNavigation.photo != null && !message.idUserReceivedNavigation.isWithFacebook">
+              <img [src]="message.idUserReceivedNavigation.photo"
+                *ngIf="message.idUserReceivedNavigation.photo != null && message.idUserReceivedNavigation.isWithFacebook">
+            </ion-avatar>
+            <ion-label>
+              <h3><a
+                  [routerLink]="'/profile/' + message.idUserReceived">{{ message.idUserReceivedNavigation.userName }}</a>
+              </h3>
+              <p *ngIf="message.idTypeMessage == 1">{{ message.message1 }}</p>
+              <p *ngIf="message.idTypeMessage == 2">
+                <ion-icon name="image"></ion-icon>
+              </p>
+            </ion-label>
+            <span>
+              {{ message.date | date:'HH:mm' }}
+            </span>
+          </ion-item>
+        </ng-container>
+        <ng-container *ngIf="message.idUserSend != user.id">
+          <ion-item [routerLink]="'/message/' + message.idUserSend + '/' + message.idUserReceived" detail>
+            <ion-avatar slot="start" (click)="getPhotoProfile(message.idUserSendNavigation);">
+              <img src="/assets/img/user.png" *ngIf="message.idUserSendNavigation.photo == null">
+              <img [src]="'data:image/jpeg;base64,' + message.idUserSendNavigation.photo"
+                *ngIf="message.idUserSendNavigation.photo != null && !message.idUserSendNavigation.isWithFacebook">
+              <img [src]="message.idUserSendNavigation.photo"
+                *ngIf="message.idUserSendNavigation.photo != null && message.idUserSendNavigation.isWithFacebook">
+            </ion-avatar>
+            <ion-label>
+              <h3><a [routerLink]="'/profile/' + message.idUserSend">{{ message.idUserSendNavigation.userName }}</a>
+              </h3>
+              <p *ngIf="message.idTypeMessage == 1">{{ message.message1 }}</p>
+              <p *ngIf="message.idTypeMessage == 2">
+                <ion-icon name="image"></ion-icon>
+              </p>
+            </ion-label>
+            <span>
+              {{ message.date | date:'HH:mm' }}
+            </span>
+          </ion-item>
+        </ng-container>
+      </ng-container>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="messages.length == 0 && !loadingFindByIdUserLast">
+    <div class="container padding-top-100 ion-text-center">
+      <div class="font-size-100">
+        <ion-icon name="chatbubbles"></ion-icon>
+        <h3>Cuando tengas Mensajes, aparecerá aqui.</h3>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="messages.length == 0 && loadingFindByIdUserLast">
+    <ion-list>
+      <ion-item *ngFor="let x of [1,1,1,1,1,1,1,1,1,1,1]">
+        <ion-thumbnail slot="start"></ion-thumbnail>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="messages.length > 0 && loadingFindByIdUserLast">
+    <ion-list>
+      <ion-item *ngFor="let x of [1,1,1,1,1,1,1,1,1,1,1]">
+        <ion-thumbnail slot="start"></ion-thumbnail>
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="danger" (click)="add();">
+      <ion-icon name="chatbubbles"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

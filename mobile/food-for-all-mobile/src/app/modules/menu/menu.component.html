@@ -1,0 +1,26 @@
+<!-- <ion-router-outlet></ion-router-outlet> -->
+<ion-tabs id="menu">
+    <ion-tab-bar slot="bottom" color="danger">
+        <ion-tab-button tab="home">
+            <ion-icon name="home"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button tab="stocks" *ngIf="user.idUserType == 2">
+            <ion-icon name="cube"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button tab="locations" *ngIf="user.idUserType == 2">
+            <ion-icon name="navigate"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button tab="stock-searcher" *ngIf="user.idUserType == 3">
+            <ion-icon name="search"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button tab="products-beneficiary" *ngIf="user.idUserType == 3">
+            <ion-icon name="cart"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button tab="messages">
+            <ion-icon name="chatbubbles"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="presentActionSheet();">
+            <ion-icon name="more"></ion-icon>
+        </ion-tab-button>
+    </ion-tab-bar>
+</ion-tabs>

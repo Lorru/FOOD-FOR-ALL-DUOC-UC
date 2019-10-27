@@ -1,0 +1,271 @@
+<ion-header no-border>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/menu/stocks"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Stock</ion-title>
+    <ion-buttons slot="end" *ngIf="stock != null && stock.idUser != user.id">
+      <ion-button (click)="presentActionSheet();">
+        <ion-icon name="call"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ng-container *ngIf="!loadingFindById && stock != null">
+    <div style="text-align: -webkit-center;">
+      <ion-avatar>
+        <img [src]="'assets/img/products/' + stock.idProductNavigation.referenceImage">
+      </ion-avatar>
+      <ion-icon name="star" *ngFor="let x of stars"></ion-icon>
+      <br>
+      <ion-button fill="clear" color="dark" (click)="addCalification();" *ngIf="stock.idUser != user.id && calificationStock == null">
+        Califica este Alimento
+      </ion-button>
+      <ion-button fill="clear" color="dark" (click)="destroyCalification();" *ngIf="stock.idUser != user.id && calificationStock != null">
+        Sacar Calificación para este Alimento
+      </ion-button>
+    </div>
+    <ion-card>
+      <ion-card-header >
+        <ion-card-subtitle>Datos del stock</ion-card-subtitle>
+        <ion-card-title>{{ stock.idProductNavigation.name }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngIf="stock.idUser != user.id" [routerLink]="'/profile/' + stock.idUser" detail>
+            <ion-icon slot="start" name="heart"></ion-icon>
+            <p>
+              Donador : {{ stock.idUserNavigation.userName }}
+            </p>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="cart"></ion-icon>
+            <p>
+              Cantidad : {{ stock.quantity }}
+            </p>
+          </ion-item>
+          <ion-item *ngIf="stock.idUser == user.id">
+            <ion-icon slot="start" name="star"></ion-icon>
+            <p>
+              ¿Esta Disponible? : {{ stock.isAvailable ? 'Sí.' : 'No.' }}
+            </p>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="calendar"></ion-icon>
+            <p>
+              Fecha de Expiración :
+              {{ stock.expirationDate ? (stock.expirationDate | date:'yyyy-MM-dd') : 'Sin Fecha de Exipiración.' }}
+            </p>
+          </ion-item>
+          <ion-item *ngIf="stock.idUser == user.id">
+            <ion-icon slot="start" name="trash"></ion-icon>
+            <p>
+              ¿Esta Activo? : {{ stock.status ? 'Sí.' : 'No.' }}
+            </p>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+    <ion-card *ngIf="stockImages.length > 0">
+      <ion-card-header>
+        <ion-card-subtitle>
+          Imagenes agregadas por el Donador
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-slides pager="true">
+          <ion-slide *ngFor="let stockImage of stockImages; let i = index">
+            <div class="center-img">
+              <img [src]="'data:image/jpeg;base64,' + stockImage.referenceImage" (click)="getPhotoStock(i);">
+            </div>
+          </ion-slide>
+        </ion-slides>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-content>
+        <div class="ion-text-center">
+          <ion-button fill="clear" (click)="getLocation();">
+            <ion-icon name="map"></ion-icon> Visualizar Ubicación
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    <ion-card *ngIf="stockAvailable != null && stock.idUser != user.id">
+      <ion-card-header >
+        <ion-card-subtitle>
+          Agregar para retirar
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button color="danger" expand="full" (click)="createStockReceived();">
+          <ion-icon name="add"></ion-icon> Agregar
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-header >
+        <ion-card-subtitle>
+          Observaciones
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ stock.observation ? stock.observation : 'Sin Observaciones.' }}</p>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-header >
+        <ion-card-subtitle>
+          Beneficiarios
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ng-container *ngIf="stockReceiveds.length > 0">
+          <ion-item *ngFor="let stockReceived of stockReceiveds; let i = index">
+            <ion-avatar slot="start" (click)="getPhotoProfile(stockReceived.idUserBeneficiaryNavigation);">
+              <img src="/assets/img/user.png" *ngIf="stockReceived.idUserBeneficiaryNavigation.photo == null">
+              <img [src]="'data:image/jpeg;base64,' + stockReceived.idUserBeneficiaryNavigation.photo"
+                *ngIf="stockReceived.idUserBeneficiaryNavigation.photo != null && !stockReceived.idUserBeneficiaryNavigation.isWithFacebook">
+              <img [src]="stockReceived.idUserBeneficiaryNavigation.photo"
+                *ngIf="stockReceived.idUserBeneficiaryNavigation.photo != null && stockReceived.idUserBeneficiaryNavigation.isWithFacebook">
+            </ion-avatar>
+            <ion-label>
+              <h3><a
+                  [routerLink]="'/profile/' + stockReceived.idUserBeneficiary">{{ stockReceived.idUserBeneficiaryNavigation.userName }}</a>
+              </h3>
+            </ion-label>
+          </ion-item>
+        </ng-container>
+        <ng-container *ngIf="stockReceiveds.length == 0">
+          <ion-item>
+            <p>Sin Beneficiarios.</p>
+          </ion-item>
+        </ng-container>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-header >
+        <ion-card-subtitle>
+          Comentarios
+        </ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ng-container *ngIf="stockComments.length > 0">
+          <ion-item *ngFor="let stockComment of stockComments; let i = index">
+            <ng-container *ngIf="stockComment.idTypeMessage == 1">
+              <ion-avatar slot="start" (click)="getPhotoProfile(stockComment.idUserNavigation);">
+                <img src="/assets/img/user.png" *ngIf="stockComment.idUserNavigation.photo == null">
+                <img [src]="'data:image/jpeg;base64,' + stockComment.idUserNavigation.photo"
+                  *ngIf="stockComment.idUserNavigation.photo != null && !stockComment.idUserNavigation.isWithFacebook">
+                <img [src]="stockComment.idUserNavigation.photo"
+                  *ngIf="stockComment.idUserNavigation.photo != null && stockComment.idUserNavigation.isWithFacebook">
+              </ion-avatar>
+              <ion-label>
+                <h3><a [routerLink]="'/profile/' + stockComment.idUser">{{ stockComment.idUserNavigation.userName }}</a>
+                </h3>
+                <p>{{ stockComment.comment }}</p>
+              </ion-label>
+              <span>
+                <ion-button color="dark" fill="clear" (click)="deleteByIdStockComment(i);" slot="end">
+                  <ion-icon slot="icon-only" name="more"></ion-icon>
+                </ion-button>
+              </span>
+            </ng-container>
+            <ng-container *ngIf="stockComment.idTypeMessage == 2">
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="10">
+                    <ion-label>
+                      <h3><a
+                          [routerLink]="'/profile/' + stockComment.idUser">{{ stockComment.idUserNavigation.userName }}</a>
+                      </h3>
+                    </ion-label>
+                  </ion-col>
+                  <ion-col size="2">
+                    <span>
+                      <ion-button color="dark" fill="clear" (click)="deleteByIdStockComment(i);" slot="end">
+                        <ion-icon slot="icon-only" name="more"></ion-icon>
+                      </ion-button>
+                    </span>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="12">
+                    <div class="center-img">
+                      <img [src]="'data:image/jpeg;base64,' + stockComment.comment" (click)="getPhotoComment(i);">
+                    </div>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ng-container>
+          </ion-item>
+        </ng-container>
+        <ng-container *ngIf="stockComments.length == 0">
+          <ion-item>
+            <p>Sin Comentarios.</p>
+          </ion-item>
+        </ng-container>
+      </ion-card-content>
+    </ion-card>
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button color="danger" (click)="presentActionSheetCommeny();">
+        <ion-icon name="chatboxes"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </ng-container>
+  <ng-container *ngIf="loadingFindById && stock != null">
+    <ion-list>
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-skeleton-text animated></ion-skeleton-text>
+        </ion-item-divider>
+        <ion-item>
+          <ion-label>
+            <ion-skeleton-text animated></ion-skeleton-text>
+          </ion-label>
+          <ion-label>
+            <ion-skeleton-text animated></ion-skeleton-text>
+          </ion-label>
+        </ion-item>
+      </ion-item-group>
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-skeleton-text animated></ion-skeleton-text>
+        </ion-item-divider>
+        <ion-item>
+          <ion-label>
+            <ion-skeleton-text animated></ion-skeleton-text>
+          </ion-label>
+          <ion-label>
+            <ion-skeleton-text animated></ion-skeleton-text>
+          </ion-label>
+        </ion-item>
+      </ion-item-group>
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-skeleton-text animated></ion-skeleton-text>
+        </ion-item-divider>
+        <ion-item *ngFor="let i of [1,1,1,1,1,1,1,1,1,1]">
+          <ion-label>
+            <ion-skeleton-text animated></ion-skeleton-text>
+          </ion-label>
+          <ion-label>
+            <ion-skeleton-text animated></ion-skeleton-text>
+          </ion-label>
+        </ion-item>
+      </ion-item-group>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="!loadingFindById && stock == null">
+    <div class="container padding-top-100 ion-text-center">
+      <div class="font-size-100">
+        <img src="assets/img/food-icon.png" width="30%">
+        <h3>Upps!!, este stock no existe.</h3>
+      </div>
+    </div>
+  </ng-container>
+</ion-content>

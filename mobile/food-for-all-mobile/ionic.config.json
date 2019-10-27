@@ -1,0 +1,7 @@
+{
+  "name": "food-for-all-mobile",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

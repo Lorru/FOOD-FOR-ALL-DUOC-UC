@@ -1,0 +1,150 @@
+<ion-header no-border>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/menu/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Perfil</ion-title>
+    <ion-buttons slot="end" *ngIf="user != null && user.id != userConnect.id">
+      <ion-button (click)="presentActionSheetCall();">
+        <ion-icon name="call"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ng-container *ngIf="!loadingFindById && user != null">
+    <div style="text-align: -webkit-center;" *ngIf="user.id != userConnect.id">
+      <ion-avatar (click)="getPhotoProfile();">
+        <img src="/assets/img/user.png" *ngIf="user.photo == null">
+        <img [src]="'data:image/jpeg;base64,' + user.photo" *ngIf="user.photo != null && !user.isWithFacebook">
+        <img [src]="user.photo" *ngIf="user.photo != null && user.isWithFacebook">
+      </ion-avatar>
+      <ion-icon name="star" *ngFor="let x of stars"></ion-icon>
+      <br>
+      <ion-button fill="clear" color="dark" (click)="addCalification();"
+        *ngIf="user.id != userConnect.id && calificationUser == null">
+        Califica este Usuario
+      </ion-button>
+      <ion-button fill="clear" color="dark" (click)="destroyCalification();"
+        *ngIf="user.id != userConnect.id && calificationUser != null">
+        Sacar Calificación para este Usuario
+      </ion-button>
+    </div>
+    <div style="text-align: -webkit-center;" *ngIf="user.id == userConnect.id">
+      <ion-avatar (click)="presentActionSheet();">
+        <img src="/assets/img/user.png" *ngIf="user.photo == null">
+        <img [src]="'data:image/jpeg;base64,' + user.photo" *ngIf="user.photo != null && !user.isWithFacebook">
+        <img [src]="user.photo" *ngIf="user.photo != null && user.isWithFacebook">
+      </ion-avatar>
+      <ion-icon name="star" *ngFor="let x of stars"></ion-icon>
+    </div>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-subtitle>{{ user.idUserType == 2 ? 'Donador' : 'Beneficiario' }}</ion-card-subtitle>
+        <ion-card-title>{{ user.userName }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item-group>
+            <ion-item-divider>
+              <h3>Datos personales</h3>
+            </ion-item-divider>
+            <ion-item>
+              <ion-icon name="mail" slot="start"></ion-icon>
+              <ion-label>{{ user.email }}</ion-label>
+            </ion-item>
+            <ion-item>
+              <ion-icon name="call" slot="start"></ion-icon>
+              <ion-label>{{ user.phone ? user.phone : 'Sin Teléfono de Contacto.' }}</ion-label>
+            </ion-item>
+            <ng-container *ngIf="user.idUserType == 3">
+              <ion-item>
+                <ion-icon name="business" slot="start"></ion-icon>
+                <ion-label>{{ user.idInstitutionNavigation ? user.idInstitutionNavigation.name : 'Sin Institución.' }}</ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-icon name="briefcase" slot="start"></ion-icon>
+                <ion-label>{{ user.idInstitutionNavigation ? user.idInstitutionNavigation.rut : 'Sin Institución.' }}</ion-label>
+              </ion-item>
+            </ng-container>
+          </ion-item-group>
+          <ion-item-group>
+            <ion-item-divider>
+              <h3>Datos del Sistema</h3>
+            </ion-item-divider>
+            <ion-item>
+              <ion-icon name="person" slot="start"></ion-icon>
+              <ion-label>{{ user.userName }}</ion-label>
+            </ion-item>
+          </ion-item-group>
+        </ion-list>
+        <ng-container *ngIf="user.id == userConnect.id">
+          <ion-button expand="block" color="danger" (click)="update();">
+            <ion-icon name="create"></ion-icon> Actualizar Datos
+          </ion-button>
+          <ion-button expand="block" color="danger" (click)="delete();">
+            <ion-icon name="close"></ion-icon> Eliminar Cuenta
+          </ion-button>
+        </ng-container>
+        <ion-button expand="block" color="danger" (click)="denouncedAdd();"
+          *ngIf="user.id != userConnect.id && denounced == null">
+          <ion-icon name="megaphone"></ion-icon> Denunciar a este Usuario
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+  <ng-container *ngIf="loadingFindById && user != null">
+    <ion-list>
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-skeleton-text animated></ion-skeleton-text>
+        </ion-item-divider>
+        <ion-item>
+          <ion-label>
+            <ion-skeleton-text animated></ion-skeleton-text>
+          </ion-label>
+          <ion-label>
+            <ion-skeleton-text animated></ion-skeleton-text>
+          </ion-label>
+        </ion-item>
+      </ion-item-group>
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-skeleton-text animated></ion-skeleton-text>
+        </ion-item-divider>
+        <ion-item>
+          <ion-label>
+            <ion-skeleton-text animated></ion-skeleton-text>
+          </ion-label>
+          <ion-label>
+            <ion-skeleton-text animated></ion-skeleton-text>
+          </ion-label>
+        </ion-item>
+      </ion-item-group>
+      <ion-item-group>
+        <ion-item-divider>
+          <ion-skeleton-text animated></ion-skeleton-text>
+        </ion-item-divider>
+        <ion-item *ngFor="let i of [1,1,1,1,1,1,1,1,1,1]">
+          <ion-label>
+            <ion-skeleton-text animated></ion-skeleton-text>
+          </ion-label>
+          <ion-label>
+            <ion-skeleton-text animated></ion-skeleton-text>
+          </ion-label>
+        </ion-item>
+      </ion-item-group>
+    </ion-list>
+  </ng-container>
+  <ng-container *ngIf="!loadingFindById && user == null">
+    <div class="container padding-top-100 ion-text-center">
+      <div class="font-size-100">
+        <ion-icon name="person"></ion-icon>
+        <h3>Upps!!, este Usuario no existe.</h3>
+      </div>
+    </div>
+  </ng-container>
+</ion-content>
